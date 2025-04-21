@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Importa el paquete de Firebase Auth
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -11,19 +12,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  void _register() {
+  Future<void> _register() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
 
     if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       Fluttertoast.showToast(msg: 'Por favor, completa todos los campos');
-    } else if (password != confirmPassword) {
+      return;
+    }
+
+    if (password != confirmPassword) {
       Fluttertoast.showToast(msg: 'Las contraseñas no coinciden');
-    } else {
-      // Aquí iría la lógica para guardar el usuario o llamar a Firebase
+      return;
+    }
+
+    try {
+      final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      // El usuario se ha registrado exitosamente
+      print('Usuario registrado: ${credential.user?.uid}');
       Fluttertoast.showToast(msg: '¡Registro exitoso!');
       Navigator.pop(context); // Volver al login
+      // Opcional: Puedes navegar a otra pantalla aquí
+    } on FirebaseAuthException catch (e) {
+      // Ocurrió un error durante el registro
+      print('Error al registrar usuario: ${e.code}');
+      String errorMessage = 'Ocurrió un error durante el registro.';
+      if (e.code == 'weak-password') {
+        errorMessage = 'La contraseña es demasiado débil.';
+      } else if (e.code == 'email-already-in-use') {
+        errorMessage = 'Ya existe una cuenta con este correo electrónico.';
+      } else if (e.code == 'invalid-email') {
+        errorMessage = 'El formato del correo electrónico no es válido.';
+      }
+      Fluttertoast.showToast(msg: errorMessage);
+    } catch (e) {
+      print('Error inesperado: $e');
+      Fluttertoast.showToast(msg: 'Ocurrió un error inesperado.');
     }
   }
 
@@ -32,6 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       SnackBar(content: Text('Google Sign-Up presionado')),
     );
     print('Google Sign-Up presionado');
+    // Aquí iría la lógica para la autenticación con Google
   }
 
   @override

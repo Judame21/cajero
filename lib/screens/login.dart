@@ -1,8 +1,33 @@
+import 'package:cajero/screens/home.dart'; // Asegúrate de que la ruta sea correcta
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cajero/screens/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart'; // Importa el paquete de Google Sign-In
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+Future<void> createUserDocument(User? user) async {
+  if (user != null) {
+    final userRef = _firestore.collection('users').doc(user.uid);
+    final snapshot = await userRef.get();
+
+    if (!snapshot.exists) {
+      await userRef.set({
+        'saldo': 0.0, // Saldo inicial
+        'email': user.email,
+        'displayName': user.displayName ?? '',
+        'photoURL': user.photoURL ?? '',
+        'creationTime': user.metadata.creationTime?.toIso8601String(),
+        // Puedes añadir más campos según tu necesidad
+      });
+      print("Documento de usuario creado para: ${user.uid}");
+    } else {
+      print("El documento de usuario ya existe para: ${user.uid}");
+    }
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -27,16 +52,17 @@ class _LoginScreenState extends State<LoginScreen> {
         email: email,
         password: password,
       );
-      // El usuario ha iniciado sesión exitosamente
-      print('Usuario logueado: ${credential.user?.uid}');
-      Fluttertoast.showToast(msg: '¡Inicio de sesión exitoso!');
-      // Navega a la pantalla principal de tu aplicación
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()), // Reemplaza HomeScreen() con tu pantalla principal
-      );
+      User? user = credential.user;
+      if (user != null) {
+        await createUserDocument(user);
+        print('Usuario logueado: ${user.uid}');
+        Fluttertoast.showToast(msg: '¡Inicio de sesión exitoso!');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()), // Usa el import correcto
+        );
+      }
     } on FirebaseAuthException catch (e) {
-      // Ocurrió un error durante el inicio de sesión
       print('Error al iniciar sesión: ${e.code}');
       String errorMessage = 'Ocurrió un error al iniciar sesión.';
       if (e.code == 'user-not-found') {
@@ -62,7 +88,6 @@ class _LoginScreenState extends State<LoginScreen> {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        // El usuario canceló el inicio de sesión con Google
         return;
       }
 
@@ -79,11 +104,12 @@ class _LoginScreenState extends State<LoginScreen> {
       final User? user = userCredential.user;
 
       if (user != null) {
+        await createUserDocument(user);
         print('Usuario de Google logueado: ${user.uid}');
         Fluttertoast.showToast(msg: '¡Inicio de sesión con Google exitoso!');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()), // Reemplaza HomeScreen()
+          MaterialPageRoute(builder: (context) => HomeScreen()), // Usa el import correcto
         );
       }
     } catch (e) {
@@ -147,19 +173,6 @@ class _LoginScreenState extends State<LoginScreen> {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Recuerda crear tu HomeScreen widget
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Pantalla Principal')),
-      body: Center(
-        child: Text('¡Bienvenido a la aplicación!'),
       ),
     );
   }

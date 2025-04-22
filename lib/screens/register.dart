@@ -53,14 +53,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  void _signUpWithGoogle() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Google Sign-Up presionado')),
-    );
-    print('Google Sign-Up presionado');
-    // Aquí iría la lógica para la autenticación con Google
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,25 +82,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               onPressed: _register,
               child: Text('Registrarse'),
             ),
-            SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: _signUpWithGoogle,
-              icon: Image.network(
-                'https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png',
-                height: 24,
-                width: 24,
-              ),
-              label: Text('Registrarse con Google'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                minimumSize: Size(double.infinity, 50),
-                side: BorderSide(color: Colors.grey),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            )
           ],
         ),
       ),

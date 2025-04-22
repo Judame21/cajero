@@ -59,7 +59,8 @@ class _LoginScreenState extends State<LoginScreen> {
         Fluttertoast.showToast(msg: '¡Inicio de sesión exitoso!');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()), // Usa el import correcto
+          MaterialPageRoute(
+              builder: (context) => HomeScreen()), // Usa el import correcto
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -79,7 +80,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Fluttertoast.showToast(msg: errorMessage);
     } catch (e) {
       print('Error inesperado al iniciar sesión: $e');
-      Fluttertoast.showToast(msg: 'Ocurrió un error inesperado al iniciar sesión.');
+      Fluttertoast.showToast(
+          msg: 'Ocurrió un error inesperado al iniciar sesión.');
     }
   }
 
@@ -91,7 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -109,7 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
         Fluttertoast.showToast(msg: '¡Inicio de sesión con Google exitoso!');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()), // Usa el import correcto
+          MaterialPageRoute(
+              builder: (context) => HomeScreen()), // Usa el import correcto
         );
       }
     } catch (e) {
@@ -129,18 +133,69 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Correo electrónico'),
+              decoration: InputDecoration(
+                labelText: 'Correo electrónico',
+                prefixIcon: Icon(Icons.email),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: const Color.fromARGB(255, 255, 255, 255),
+              ),
               keyboardType: TextInputType.emailAddress,
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Contraseña'),
+              decoration: InputDecoration(
+                labelText: 'Contraseña',
+                prefixIcon: Icon(Icons.lock),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: const Color.fromARGB(255, 255, 255, 255),
+              ),
               obscureText: true,
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _login,
-              child: Text('Iniciar sesión'),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _login,
+                    child: Text('Iniciar sesión'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      minimumSize: Size(double.infinity, 50),
+                      side: BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _signInWithGoogle,
+                    icon: Image.network(
+                      'https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png',
+                      height: 24,
+                      width: 24,
+                    ),
+                    label: Text('Google'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      minimumSize: Size(double.infinity, 50),
+                      side: BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 10),
             TextButton(
@@ -151,26 +206,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               },
               child: Text('¿No tienes cuenta? Regístrate aquí'),
+              style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      minimumSize: Size(double.infinity, 50),
+                      side: BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
             ),
             SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: _signInWithGoogle,
-              icon: Image.network(
-                'https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png',
-                height: 24,
-                width: 24,
-              ),
-              label: Text('Iniciar sesión con Google'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                minimumSize: Size(double.infinity, 50),
-                side: BorderSide(color: Colors.grey),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            )
           ],
         ),
       ),

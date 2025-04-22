@@ -176,39 +176,76 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Card(
-              elevation: 4.0,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Tu Saldo',
-                      style: TextStyle(fontSize: 18.0, color: Colors.grey[600]),
-                    ),
-                    SizedBox(height: 8.0),
-                    StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                      stream: _userStream,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData && snapshot.data!.exists) {
-                          _saldo = snapshot.data!.data()?['saldo']?.toDouble() ?? 0.0;
-                          return Text(
-                            '\$ ${_saldo.toStringAsFixed(2)}',
-                            style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.green[700]),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text('Error al cargar el saldo', style: TextStyle(color: Colors.red));
-                        } else if (snapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else {
-                          return Text('\$ 0.00', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.grey));
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
+            StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+              stream: _userStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!.exists) {
+                  final userData = snapshot.data!.data();
+                  final userName = userData?['displayName'] as String? ?? ''; // Obtén el nombre
+                  _saldo = userData?['saldo']?.toDouble() ?? 0.0;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Bienvenido, $userName', // Muestra el nombre
+                        style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8.0),
+                      Card(
+                        elevation: 4.0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Tu Saldo',
+                                style: TextStyle(fontSize: 18.0, color: Colors.grey[600]),
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                '\$ ${_saldo.toStringAsFixed(2)}',
+                                style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.green[700]),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error al cargar la información del usuario', style: TextStyle(color: Colors.red));
+                } else if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else {
+                  return Column(
+                    children: [
+                      Text('Bienvenido'), // Mensaje genérico si no hay datos
+                      SizedBox(height: 8.0),
+                      Card(
+                        elevation: 4.0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Tu Saldo',
+                                style: TextStyle(fontSize: 18.0, color: Colors.grey[600]),
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                '\$ 0.00',
+                                style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
             ),
             SizedBox(height: 20.0),
             Row(

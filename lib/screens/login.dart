@@ -205,7 +205,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   MaterialPageRoute(builder: (context) => RegisterScreen()),
                 );
               },
-              child: Text('¿No tienes cuenta? Regístrate aquí'),
               style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
@@ -215,6 +214,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
+              child: Text('¿No tienes cuenta? Regístrate aquí'),
+              
             ),
             SizedBox(height: 20),
           ],

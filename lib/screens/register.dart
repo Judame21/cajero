@@ -88,26 +88,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
           children: [
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: 'Nombre'),
+              decoration: InputDecoration(
+                labelText: 'Nombre', 
+                prefixIcon: Icon(Icons.person),
+                border:OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: const Color.fromARGB(255, 255, 255, 255),
+                ),
+              
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Correo electrónico'),
+              decoration: InputDecoration(labelText: 'Correo electrónico', 
+                prefixIcon: Icon(Icons.email),
+                border:OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: const Color.fromARGB(255, 255, 255, 255),),
               keyboardType: TextInputType.emailAddress,
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Contraseña'),
+              decoration: InputDecoration(labelText: 'Contraseña', 
+                prefixIcon: Icon(Icons.lock),
+                border:OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: const Color.fromARGB(255, 255, 255, 255),),
               obscureText: true,
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _confirmPasswordController,
-              decoration: InputDecoration(labelText: 'Confirmar contraseña'),
+              decoration: InputDecoration(labelText: 'Confirmar contraseña', 
+                prefixIcon: Icon(Icons.lock),
+                border:OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: const Color.fromARGB(255, 255, 255, 255),),
               obscureText: true,
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _register,
+              style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      minimumSize: Size(double.infinity, 50),
+                      side: BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
               child: Text('Registrarse'),
             ),
             SizedBox(height: 10),
@@ -115,6 +146,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
               onPressed: () {
                 Navigator.pop(context); // Volver a la pantalla de login
               },
+              style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      minimumSize: Size(double.infinity, 50),
+                      side: BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
               child: Text('¿Ya tienes una cuenta? Inicia sesión'),
             ),
           ],

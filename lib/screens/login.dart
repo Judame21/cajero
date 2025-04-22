@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cajero/screens/register.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Importa el paquete de Firebase Auth
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart'; // Importa el paquete de Google Sign-In
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -39,9 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
       print('Error al iniciar sesión: ${e.code}');
       String errorMessage = 'Ocurrió un error al iniciar sesión.';
       if (e.code == 'user-not-found') {
-        errorMessage = 'No se encontró ningún usuario con ese correo electrónico.';
+        errorMessage = 'Correo electrónico o contraseña incorrectos.';
       } else if (e.code == 'wrong-password') {
-        errorMessage = 'La contraseña ingresada no es correcta.';
+        errorMessage = 'Correo electrónico o contraseña incorrectos.';
       } else if (e.code == 'invalid-email') {
         errorMessage = 'El formato del correo electrónico no es válido.';
       } else if (e.code == 'user-disabled') {
@@ -49,8 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (e.code == 'invalid-credential') {
         errorMessage = 'Correo electrónico o contraseña incorrectos.';
       }
-
-
       Fluttertoast.showToast(msg: errorMessage);
     } catch (e) {
       print('Error inesperado al iniciar sesión: $e');
@@ -58,12 +57,39 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _signInWithGoogle() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Google Sign-In presionado')),
-    );
-    print('Google Sign-In presionado');
-    // Aquí iría la lógica para la autenticación con Google
+  Future<void> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        // El usuario canceló el inicio de sesión con Google
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        print('Usuario de Google logueado: ${user.uid}');
+        Fluttertoast.showToast(msg: '¡Inicio de sesión con Google exitoso!');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()), // Reemplaza HomeScreen()
+        );
+      }
+    } catch (e) {
+      print('Error al iniciar sesión con Google: $e');
+      Fluttertoast.showToast(msg: 'Error al iniciar sesión con Google.');
+    }
   }
 
   @override

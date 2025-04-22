@@ -12,7 +12,20 @@
           "package_name": "com.example.cajero"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "185023283320-so69skiue1bfcl31gues0ecidjdgsood.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cajero",
+            "certificate_hash": "1f75f3248f5965cb1ac44297ef658b9707ce931e"
+          }
+        },
+        {
+          "client_id": "185023283320-fu6pvh1f2gvev06e5l4v94jkjoihu5ua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCP4l_jdW2K7RE93D7UvGMOLSeBLVCztxg"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "185023283320-fu6pvh1f2gvev06e5l4v94jkjoihu5ua.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
